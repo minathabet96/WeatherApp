@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.weatherapp"
-        minSdk = 24
+        minSdk = 33
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -34,10 +34,14 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
     dependencies {
+        implementation("com.google.android.gms:play-services-location:21.1.0")
         implementation ("com.github.akarnokd:rxjava3-retrofit-adapter:3.0.0")
         implementation ("androidx.room:room-rxjava3:2.6.1")
         implementation ("androidx.room:room-runtime:2.6.1")
@@ -60,5 +64,9 @@ dependencies {
         implementation ("androidx.lifecycle:lifecycle-extensions:2.2.0")
         implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
         kapt ("androidx.room:room-compiler:2.6.1")
+        implementation ("de.hdodenhof:circleimageview:3.1.0")
+        implementation ("androidx.navigation:navigation-fragment:2.5.3")
+        implementation ("androidx.navigation:navigation-ui:2.5.3")
+        implementation ("com.google.android.material:material:1.11.0")
     }
 }
