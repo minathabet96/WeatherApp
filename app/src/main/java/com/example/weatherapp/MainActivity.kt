@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
+
 //KEY: 8084bd2c7fd59779ef2676212ff216e8
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
@@ -25,12 +26,27 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar?.apply {
-            setHomeAsUpIndicator(R.drawable.menu_symbol)
+            setHomeAsUpIndicator(R.drawable.menu)
             setDisplayShowHomeEnabled(true)
             setDisplayHomeAsUpEnabled(true)
         }
         val navController = Navigation.findNavController(this, R.id.nav_host_fragment)
         NavigationUI.setupWithNavController(binding.navigationView, navController)
+        binding.navigationView.setNavigationItemSelectedListener {
+            if (supportFragmentManager.backStackEntryCount > 0) {
+                val fragmentId =
+                    supportFragmentManager.getBackStackEntryAt(supportFragmentManager.backStackEntryCount - 1).id
+                if (fragmentId == R.id.favoriteFragment)
+                    supportFragmentManager.popBackStack()
+            }
+            when(it.itemId){
+                R.id.homeFragment -> navController.navigate(R.id.homeFragment)
+                R.id.favoritesFragment -> navController.navigate(R.id.favoritesFragment)
+                R.id.settingsFragment -> navController.navigate(R.id.settingsFragment)
+            }
+                binding.drawerLayout.closeDrawer(GravityCompat.START)
+                true
+        }
     }
 
 //                    val date = Date(x!!.list[0].dt * 1000)
@@ -42,14 +58,14 @@ class MainActivity : AppCompatActivity() {
 //                            println(item.weather[0].main)
 //                }
 
-            override fun onOptionsItemSelected(item: MenuItem): Boolean {
-            if (item.itemId == android.R.id.home) {
-                if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) binding.drawerLayout.closeDrawer(
-                    GravityCompat.START
-                ) else binding.drawerLayout.openDrawer(GravityCompat.START)
-            }
-            return super.onOptionsItemSelected(item)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) binding.drawerLayout.closeDrawer(
+                GravityCompat.START
+            ) else binding.drawerLayout.openDrawer(GravityCompat.START)
         }
+        return super.onOptionsItemSelected(item)
+    }
 }
 
 

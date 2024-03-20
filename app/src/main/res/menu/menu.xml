@@ -11,12 +11,19 @@
         android:id="@+id/favoritesFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:icon="@drawable/profile"
-        android:title="Profile" />
+        android:icon="@drawable/favorites"
+        android:title="Favorites" />
     <item
         android:id="@+id/settingsFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:icon="@drawable/baseline_app_settings_alt_24"
+        android:icon="@drawable/settings"
+        android:title="Settings" />
+    <item
+        android:visible="false"
+        android:id="@+id/favoriteFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:icon="@drawable/settings"
         android:title="Settings" />
 </menu>

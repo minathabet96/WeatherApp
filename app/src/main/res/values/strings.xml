@@ -8,4 +8,18 @@
     <string name="cloud">Cloud</string>
     <string name="visibility">Visibility</string>
     <string name="humidity_unit">%</string>
+    <string name="location">Location</string>
+    <string name="language">Language</string>
+    <string name="temperature">Temperature</string>
+    <string name="windSpeed">Wind Speed</string>
+    <string name="gps">GPS</string>
+    <string name="map">Map</string>
+    <string name="english">English</string>
+    <string name="arabic">Arabic</string>
+    <string name="celsius">Celsius</string>
+    <string name="kelvin">Kelvin</string>
+    <string name="fehrenheit">Fehrenheit</string>
+    <string name="meterPerSecond">Meter / Sec</string>
+    <string name="milePerHour">Mile / Hour</string>
+    <string name="add">Add location</string>
 </resources>

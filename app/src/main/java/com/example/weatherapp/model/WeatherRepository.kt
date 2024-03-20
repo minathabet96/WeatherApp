@@ -2,6 +2,7 @@ package com.example.weatherapp.model
 
 import com.example.weatherapp.database.WeatherLocalDataSource
 import kotlinx.coroutines.flow.Flow
+import kotlin.collections.List
 
 class WeatherRepository private constructor(
     private var remote: WeatherRemoteDataSource,
@@ -26,6 +27,15 @@ class WeatherRepository private constructor(
     }
     fun getWeekWeatherStats(lat: String, lon: String, lang: String, units: String): Flow<FiveDayForecast> {
        return remote.getWeekWeatherStats(lat, lon, lang, units)
+    }
+    fun getAllFavorites(): Flow<List<FavoriteLocation>> {
+        return local.getAllFavorites()
+    }
+    suspend fun add(location: FavoriteLocation){
+        local.add(location)
+    }
+    suspend fun remove(location: FavoriteLocation){
+        local.remove(location)
     }
 }
 
