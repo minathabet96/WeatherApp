@@ -29,5 +29,5 @@ class DayAdapter(private val context: Context) : ListAdapter<Day, DayAdapter.Vie
         holder.binding.dayMinTemp.text = current.min.toString()
         //Glide.with(context).load()
     }
-    class ViewHolder(var binding: DayItemBinding): RecyclerView.ViewHolder(binding.root)
+    class ViewHolder(val binding: DayItemBinding): RecyclerView.ViewHolder(binding.root)
 }

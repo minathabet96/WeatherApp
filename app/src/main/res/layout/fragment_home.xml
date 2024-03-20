@@ -62,6 +62,7 @@
                 android:id="@+id/cardView2"
                 android:layout_width="360dp"
                 android:layout_height="240dp"
+                app:cardBackgroundColor="@color/secondary"
                 app:cardCornerRadius="20dp"
                 app:cardUseCompatPadding="true"
                 app:layout_constraintEnd_toEndOf="@+id/day_recycler"
@@ -71,7 +72,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/background">
+                    android:background="@color/secondary">
 
                     <TextView
                         android:id="@+id/wind_txt"
@@ -294,6 +295,7 @@
                 android:layout_width="353dp"
                 android:layout_height="220dp"
                 android:layout_marginTop="32dp"
+                app:cardBackgroundColor="@color/secondary"
                 app:cardCornerRadius="20dp"
                 app:layout_constraintEnd_toEndOf="@+id/location"
                 app:layout_constraintStart_toStartOf="@id/location"
