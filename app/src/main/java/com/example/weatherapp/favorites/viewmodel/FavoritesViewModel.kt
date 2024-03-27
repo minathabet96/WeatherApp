@@ -1,33 +1,59 @@
 package com.example.weatherapp.favorites.viewmodel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.weatherapp.model.Alert
 import com.example.weatherapp.model.FavoriteLocation
 import com.example.weatherapp.model.WeatherRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
-class FavoritesViewModel(val repo: WeatherRepository): ViewModel() {
-    private var _stateFlow: MutableStateFlow<List<FavoriteLocation>> = MutableStateFlow(listOf())
-    val stateFlow: StateFlow<List<FavoriteLocation>> = _stateFlow.asStateFlow()
-    fun add(location: FavoriteLocation) {
+class FavoritesViewModel(private val repo: WeatherRepository): ViewModel() {
+
+    var alert = Alert("", 0.0, 0.0, "", 0)
+    private var _favoritesStateFlow: MutableStateFlow<List<FavoriteLocation>> = MutableStateFlow(listOf())
+    val favoritesStateFlow: StateFlow<List<FavoriteLocation>> = _favoritesStateFlow.asStateFlow()
+
+    private var _alertsStateFlow: MutableStateFlow<List<Alert>> = MutableStateFlow(listOf())
+    val alertsStateFlow: StateFlow<List<Alert>> = _alertsStateFlow.asStateFlow()
+    fun addToFavorites(location: FavoriteLocation) {
         viewModelScope.launch(Dispatchers.IO) {
-            repo.add(location)
+            repo.addToFavorites(location)
         }
     }
-    fun remove(location: FavoriteLocation) {
+    fun removeFromFavorites(location: FavoriteLocation) {
         viewModelScope.launch(Dispatchers.IO) {
-            repo.remove(location)
+            repo.removeFromFavorites(location)
         }
     }
     fun getAllFavorites() {
         viewModelScope.launch(Dispatchers.IO) {
             repo.getAllFavorites().collect {
-                _stateFlow.value = it
+                _favoritesStateFlow.value = it
+            }
+        }
+    }
+    fun addToAlerts(alert: Alert) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.addToAlerts(alert)
+        }
+    }
+    fun removeFromAlerts(alert: Alert) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.removeFromAlerts(alert)
+        }
+    }
+    fun getAllAlerts() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.getAllAlerts().collect {
+                _alertsStateFlow.value = it
             }
         }
     }

@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.location.Geocoder
 import android.location.LocationManager
 import android.os.Bundle
@@ -12,6 +13,7 @@ import android.provider.Settings
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
@@ -20,18 +22,23 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.PermissionChecker
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.HORIZONTAL
-import com.example.weatherapp.Utils.ApiResponse
+import com.example.weatherapp.R
+import com.example.weatherapp.utils.ApiResponse
+import com.example.weatherapp.utils.unixToDateTime
 import com.example.weatherapp.database.WeatherLocalDataSource
 import com.example.weatherapp.databinding.FragmentHomeBinding
 import com.example.weatherapp.home.viewModel.HomeViewModel
 import com.example.weatherapp.home.viewModel.HomeViewModelFactory
+import com.example.weatherapp.model.Day
 import com.example.weatherapp.model.Step
 import com.example.weatherapp.model.WeatherRemoteDataSource
 import com.example.weatherapp.model.WeatherRepository
 import com.example.weatherapp.settings.viewmodel.SettingsViewModel
 import com.example.weatherapp.settings.viewmodel.SettingsViewModelFactory
+import com.example.weatherapp.utils.viewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -40,6 +47,10 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.TextStyle
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -49,10 +60,11 @@ class HomeFragment : Fragment() {
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var settingsViewModel: SettingsViewModel
     private lateinit var stepAdapter: StepAdapter
+    private lateinit var dayAdapter: DayAdapter
     private lateinit var myLayoutManager: LinearLayoutManager
 
 
-    val REQUEST_LOCATION_CODE = 1111
+    private val REQUEST_LOCATION_CODE = 1111
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var binding: FragmentHomeBinding
     override fun onCreateView(
@@ -60,7 +72,6 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        stepAdapter = StepAdapter(requireContext())
         myLayoutManager = LinearLayoutManager(requireContext())
 
         homeViewModel = ViewModelProvider(
@@ -80,20 +91,37 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
-    override fun onStart() {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         super.onStart()
-        println("onStart")
         if (checkPermissions()) {
-            println("Permission granted")
             if (isLocationEnabled()) {
-                println("Location Enabled")
                 getFreshLocation {
+                    var windSpeedUnit = "metric"
+                    var tempUnit = "metric"
+                    var lang = "en"
+
                     lifecycleScope.launch {
-                        checkTempUnit()
-                        println("HAHA UNIT: ")
-                        homeViewModel.getWeatherForToday(it[0], it[1], "en", "metric")
-                        homeViewModel.getFiveDayForecast(it[0], it[1], "en", "metric")
+                        settingsViewModel.getWindSpeedUnit().collect {
+                            windSpeedUnit = it
+                        }
                     }
+
+                    lifecycleScope.launch {
+                        settingsViewModel.getLocale().collect { languageCode ->
+                            lang = languageCode
+                            println("LANGUAGE: $lang")
+                            getTodaysDate(Locale(lang))
+
+                            settingsViewModel.getTempUnit().collect { unit ->
+                                tempUnit = unit
+
+                                homeViewModel.getWeatherForToday(it[0], it[1], lang, unit)
+                                homeViewModel.getFiveDayForecast(it[0], it[1], lang, unit)
+                            }
+                        }
+                    }
+
                     lifecycleScope.launch {
                         homeViewModel.currentWeatherStateFlow.collect { response ->
                             when (response) {
@@ -103,12 +131,34 @@ class HomeFragment : Fragment() {
 
                                 is ApiResponse.Success -> {
                                     binding.weatherState.text = response.data.weather[0].description
-                                    binding.degree.text = response.data.main.temp.toInt().toString()
+                                    binding.tempUnitTxt.text =
+                                        when (tempUnit) {
+                                            "standard" -> getString(R.string.temp_unit_K)
+                                            "imperial" -> getString(R.string.temp_unit_F)
+                                            else -> getString(R.string.temp_unit_C)
+                                        }
+                                    binding.windUnitTxt.text =
+                                        when (windSpeedUnit) {
+                                            "imperial" -> getString(R.string.milePerHour)
+                                            else -> getString(R.string.meterPerSecond)
+                                        }
+
+                                    binding.degree.text =
+                                        response.data.main.temp.toInt().toString()
                                     binding.pressureTxt.text =
                                         response.data.main.pressure.toString()
                                     binding.humidityTxt.text =
                                         response.data.main.humidity.toString()
-                                    binding.windTxt.text = response.data.wind.speed.toString()
+                                    binding.windTxt.text =
+                                        if (tempUnit == "imperial" && windSpeedUnit != "imperial")
+                                            (response.data.wind.speed * 0.447).toString().take(3)
+                                        else if (tempUnit == "metric" && windSpeedUnit == "imperial")
+                                            (response.data.wind.speed * 2.2369).toString().take(3)
+                                        else if (tempUnit == "standard" && windSpeedUnit == "imperial")
+                                            (response.data.wind.speed * 2.2369).toString().take(3)
+                                        else
+                                            response.data.wind.speed.toString().take(3)
+
                                     binding.cloudTxt.text = response.data.clouds.all.toString()
                                     binding.visibilityTxt.text = response.data.visibility.toString()
                                 }
@@ -123,34 +173,145 @@ class HomeFragment : Fragment() {
                         homeViewModel.fiveDayForecastStateFlow.collect { response ->
                             when (response) {
                                 is ApiResponse.Loading -> {
-                                    binding.progressBar.visibility = VISIBLE
-                                    binding.mainGroup.visibility = INVISIBLE
+                                    println("it is now loading")
+                                    binding.failureGroup.visibility = GONE
+                                    binding.mainGroup.visibility = GONE
+                                    binding.loadingLottie.visibility = VISIBLE
                                 }
 
                                 is ApiResponse.Success -> {
-                                    binding.progressBar.visibility = INVISIBLE
+                                    binding.failureGroup.visibility = GONE
+                                    binding.loadingLottie.visibility = GONE
                                     binding.mainGroup.visibility = VISIBLE
-                                    println(response.data.list)
                                     val list = mutableListOf<Step>()
                                     for (i in 0..7) {
-                                        println(response.data.list[i])
-                                        val hour = formatDate(response.data.list[i].dt)
+
+                                        var hour =
+                                            formatDate(response.data.list[i].dt, Locale(lang))
                                         val temp =
                                             response.data.list[i].main.temp.toInt().toString()
-                                        val step = Step(hour, "", temp)
+                                        val icon = response.data.list[i].weather[0].icon
+                                        val step = Step(hour, icon, temp)
                                         list.add(step)
                                         binding.stepRecycler.apply {
+                                            stepAdapter = StepAdapter(requireContext(), tempUnit)
                                             stepAdapter.submitList(list)
                                             adapter = stepAdapter
                                             myLayoutManager.orientation = HORIZONTAL
                                             layoutManager = myLayoutManager
                                         }
                                     }
+                                    val today = LocalDateTime.now().toLocalDate()
+                                    val filteredSteps =
+                                        response.data.list.filter { unixToDateTime(it.dt).toLocalDate() != today }
+                                    val numberOfLastDaySteps = filteredSteps.size % 8
+                                    var xNum = 0
+                                    val daysList = mutableListOf<Day>()
+                                    for (singleDay in 0 until 4) {
+                                        var dayMin: Int
+                                        var dayMax: Int
+                                        val date = Instant.ofEpochSecond(filteredSteps[xNum].dt)
+                                            .atOffset(ZoneOffset.UTC)
+                                            .toLocalDate()
+                                        val dayOfWeek = date.dayOfWeek.getDisplayName(
+                                            TextStyle.SHORT,
+                                            Locale.ENGLISH
+                                        ).take(3).capitalize()
+                                        val weatherState =
+                                            filteredSteps[xNum + 2].weather[0].description
+                                        val icon = filteredSteps[xNum + 2].weather[0].icon
+                                        val dayStepsList =
+                                            mutableListOf<com.example.weatherapp.model.List>()
 
+                                        for (i in xNum until xNum + 8)
+                                            dayStepsList.add(filteredSteps[i])
+
+                                        dayMin = dayStepsList[0].main.temp.toInt()
+                                        dayMax = dayStepsList[0].main.temp.toInt()
+                                        for (step in dayStepsList) {
+                                            if (step.main.temp.toInt() < dayMin)
+                                                dayMin = step.main.temp.toInt()
+                                            if (step.main.temp.toInt() > dayMax)
+                                                dayMax = step.main.temp.toInt()
+                                        }
+                                        daysList.add(
+                                            Day(dayOfWeek, icon, weatherState, dayMax, dayMin)
+                                        )
+                                        xNum += 8
+                                    }
+                                    if (numberOfLastDaySteps != 0) {
+                                        var dayMin: Int
+                                        var dayMax: Int
+                                        val date = Instant.ofEpochSecond(filteredSteps[xNum].dt)
+                                            .atOffset(ZoneOffset.UTC)
+                                            .toLocalDate()
+                                        val dayOfWeek = date.dayOfWeek.getDisplayName(
+                                            TextStyle.SHORT,
+                                            Locale.ENGLISH
+                                        ).take(3).capitalize()
+                                        val weatherState =
+                                            if (filteredSteps.size > 33)
+                                                filteredSteps[xNum + 2].weather[0].description
+                                            else
+                                                filteredSteps[xNum].weather[0].description
+                                        val icon =
+                                            if (filteredSteps.size > 33)
+                                                filteredSteps[34].weather[0].icon
+                                            else
+                                                filteredSteps[xNum].weather[0].icon
+
+                                        val dayStepsList =
+                                            mutableListOf<com.example.weatherapp.model.List>()
+
+                                        for (i in xNum until filteredSteps.size)
+                                            dayStepsList.add(filteredSteps[i])
+
+                                        dayMin = dayStepsList[0].main.temp.toInt()
+                                        dayMax = dayStepsList[0].main.temp.toInt()
+                                        for (step in dayStepsList) {
+                                            if (step.main.temp.toInt() < dayMin)
+                                                dayMin = step.main.temp.toInt()
+                                            if (step.main.temp.toInt() > dayMax)
+                                                dayMax = step.main.temp.toInt()
+                                        }
+                                        daysList.add(
+                                            Day(
+                                                dayOfWeek,
+                                                icon,
+                                                weatherState,
+                                                dayMax,
+                                                dayMin
+                                            )
+                                        )
+                                        xNum += 8
+                                    }
+                                    println(daysList)
+                                    if (lang == "ar") {
+                                        for (day in daysList) {
+                                            when (day.dayName) {
+                                                "Sun" -> day.dayName = "الأحد"
+                                                "Mon" -> day.dayName = "الإثنين"
+                                                "Tue" -> day.dayName = "الثلاثاء"
+                                                "Wed" -> day.dayName = "الإربعاء"
+                                                "Thu" -> day.dayName = "الخميس"
+                                                "Fri" -> day.dayName = "الجمعة"
+                                                "Sat" -> day.dayName = "السبت"
+                                            }
+                                        }
+                                    }
+                                    dayAdapter = DayAdapter(requireContext(), tempUnit)
+                                    dayAdapter.submitList(daysList)
+                                    binding.dayRecycler.apply {
+                                        adapter = dayAdapter
+                                        layoutManager = LinearLayoutManager(requireContext())
+                                    }
                                 }
 
                                 is ApiResponse.Failure -> {
-
+                                    println("it is now a failure")
+                                    binding.loadingLottie.visibility = GONE
+                                    binding.mainGroup.visibility = GONE
+                                    binding.failureLottie.visibility = VISIBLE
                                 }
                             }
                         }
@@ -163,7 +324,6 @@ class HomeFragment : Fragment() {
             println("not permitted")
             requestPermissions()
         }
-        getDate()
     }
 
     private fun checkPermissions(): Boolean {
@@ -233,42 +393,29 @@ class HomeFragment : Fragment() {
 
     }
 
-    private fun getDate() {
-        val dateFormat = SimpleDateFormat("EEE, d MMM", Locale.ENGLISH)
+    private fun getTodaysDate(locale: Locale) {
+        val dateFormat = SimpleDateFormat("EEE, d MMM", locale)
         binding.date.text = dateFormat.format(Date())
     }
 
-    private fun formatDate(timestamp: Long): String {
+    private fun formatDate(timestamp: Long, locale: Locale): String {
         val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
             timeInMillis = timestamp * 1000 // Convert seconds to milliseconds
         }
-
-        val dateFormat = SimpleDateFormat("h a", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("h a", locale)
         dateFormat.timeZone = TimeZone.getTimeZone("UTC")
 
         return dateFormat.format(calendar.time)
     }
-
-    private suspend fun checkTempUnit() {
-        println("we're inside")
-        lifecycleScope.launch {
-            var tempUnit: String
-            settingsViewModel.getTempUnit().collect {
-                println("it ->>>> $it")
-                when (it) {
-                    "celsius" -> {
-                        tempUnit = "metric"
-                    }
-
-                    "kelvin" -> {
-                        tempUnit = "standard"
-                    }
-
-                    "fehrenheit" -> {
-                        tempUnit = "imperial"
-                    }
-                }
-            }
-        }
-    }
 }
+//    private fun setLocale(languageCode: String) {
+//        val locale = Locale(languageCode)
+//        Locale.setDefault(locale)
+//        val config = Configuration()
+//        config.locale = locale
+//        resources.updateConfiguration(config, requireContext().resources.displayMetrics)
+//
+//        }
+
+
+

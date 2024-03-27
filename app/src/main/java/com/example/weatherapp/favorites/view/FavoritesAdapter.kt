@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.weatherapp.Utils.FavoritesDiffUtil
+import com.example.weatherapp.utils.FavoritesDiffUtil
 import com.example.weatherapp.databinding.FavoriteItemBinding
 import com.example.weatherapp.model.FavoriteLocation
 

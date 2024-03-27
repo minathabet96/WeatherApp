@@ -23,8 +23,9 @@
         android:id="@+id/navigation_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@color/primary"
         app:headerLayout="@layout/header_layout"
-        app:menu="@menu/menu"
-        android:layout_gravity="start" />
+        app:menu="@menu/menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scroll"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -14,16 +14,24 @@
         android:minHeight="800dp"
         tools:context=".home.view.HomeFragment">
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Large"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="370dp"
-            android:visibility="visible"
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/loading_lottie"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="280dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_rawRes="@raw/loading"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"/>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/failure_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="failure_lottie,unable" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/mainGroup"
@@ -54,14 +62,16 @@
                 android:id="@+id/day_recycler"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
                 app:layout_constraintEnd_toEndOf="@+id/step_recycler"
                 app:layout_constraintStart_toStartOf="@+id/step_recycler"
                 app:layout_constraintTop_toBottomOf="@+id/step_recycler" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardView2"
-                android:layout_width="360dp"
+                android:layout_width="400dp"
                 android:layout_height="240dp"
+                android:layout_marginTop="20dp"
                 app:cardBackgroundColor="@color/secondary"
                 app:cardCornerRadius="20dp"
                 app:cardUseCompatPadding="true"
@@ -196,7 +206,7 @@
                         android:id="@+id/cloud_txt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginStart="12dp"
                         android:textColor="#FFFFFF"
                         app:layout_constraintStart_toStartOf="@+id/imageView6"
                         app:layout_constraintTop_toBottomOf="@+id/imageView6"
@@ -238,7 +248,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="2dp"
-                        android:text="hpa"
+                        android:text="@string/pressure_unit"
                         android:textColor="#FFFFFF"
                         app:layout_constraintStart_toEndOf="@+id/pressure_txt"
                         app:layout_constraintTop_toTopOf="@+id/pressure_txt"
@@ -259,7 +269,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="2dp"
-                        android:text="m/s"
+                        android:text="@string/meterPerSecond"
                         android:textColor="#FFFFFF"
                         app:layout_constraintStart_toEndOf="@+id/wind_txt"
                         app:layout_constraintTop_toTopOf="@+id/wind_txt"
@@ -281,7 +291,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="2dp"
-                        android:text="m"
+                        android:text="@string/visibility_unit"
                         android:textColor="#FFFFFF"
                         app:layout_constraintStart_toEndOf="@+id/visibility_txt"
                         app:layout_constraintTop_toTopOf="@+id/visibility_txt"
@@ -335,10 +345,10 @@
                         tools:text="20" />
 
                     <TextView
-                        android:id="@+id/unit"
+                        android:id="@+id/temp_unit_txt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="°C"
+                        android:text="@string/temp_unit_C"
                         android:textColor="#FFFFFF"
                         android:textSize="30sp"
                         app:layout_constraintStart_toEndOf="@+id/degree"
@@ -351,12 +361,10 @@
                 android:id="@+id/location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="160dp"
-                android:layout_marginBottom="670dp"
+                android:layout_marginTop="60dp"
                 android:textColor="@color/primary"
                 android:textSize="25sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/cardView2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -374,6 +382,29 @@
                 app:layout_constraintTop_toBottomOf="@+id/location"
                 tools:text="day, dd mmm" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/failure_lottie"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="260dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_rawRes="@raw/failure" />
+
+        <TextView
+            android:id="@+id/unable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/unable_to_load_data"
+            android:textColor="@color/primary"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="@id/failure_lottie"
+            app:layout_constraintStart_toStartOf="@id/failure_lottie"
+            app:layout_constraintTop_toBottomOf="@id/failure_lottie" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

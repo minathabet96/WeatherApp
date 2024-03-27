@@ -28,14 +28,29 @@ class WeatherRepository private constructor(
     fun getWeekWeatherStats(lat: String, lon: String, lang: String, units: String): Flow<FiveDayForecast> {
        return remote.getWeekWeatherStats(lat, lon, lang, units)
     }
+
+    fun getAlert(lat: String, lon: String): Flow<AlertResponse> {
+        return remote.getAlert(lat, lon)
+    }
+
+    //LOCAL
     fun getAllFavorites(): Flow<List<FavoriteLocation>> {
         return local.getAllFavorites()
     }
-    suspend fun add(location: FavoriteLocation){
-        local.add(location)
+    suspend fun addToFavorites(location: FavoriteLocation){
+        local.addToFavorites(location)
     }
-    suspend fun remove(location: FavoriteLocation){
-        local.remove(location)
+    suspend fun removeFromFavorites(location: FavoriteLocation){
+        local.removeFromFavorites(location)
+    }
+    fun getAllAlerts(): Flow<List<Alert>> {
+        return local.getAllAlerts()
+    }
+    suspend fun addToAlerts(alert: Alert){
+        local.addToAlerts(alert)
+    }
+    suspend fun removeFromAlerts(alert: Alert){
+        local.removeFromAlerts(alert)
     }
 }
 

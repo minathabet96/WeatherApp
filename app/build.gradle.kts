@@ -43,10 +43,12 @@ android {
 
 
 dependencies {
+    implementation ("com.airbnb.android:lottie:3.4.0")
+    implementation ("com.google.android.material:material:1.11.0")
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
     implementation ("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation ("androidx.navigation:navigation-ui-ktx:2.7.7")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
-    dependencies {
         implementation ("org.osmdroid:osmdroid-android:6.1.14")
         implementation("androidx.datastore:datastore-preferences-core:1.0.0")
         implementation("androidx.datastore:datastore-preferences-rxjava2:1.0.0")
@@ -107,6 +109,4 @@ dependencies {
 
         testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.0")
         androidTestImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.0")
-
-    }
 }

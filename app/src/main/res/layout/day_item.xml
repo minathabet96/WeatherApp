@@ -2,9 +2,10 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="150dp"
-    app:cardCornerRadius="60dp"
+    android:layout_width="400dp"
+    android:layout_height="140dp"
+    app:cardBackgroundColor="@color/secondary"
+    app:cardCornerRadius="40dp"
     app:cardUseCompatPadding="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,10 +17,12 @@
             android:id="@+id/day"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginStart="16dp"
+            android:text="@string/day"
             android:textColor="@color/primary"
-            android:textSize="20sp"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Day" />
@@ -28,22 +31,22 @@
             android:id="@+id/day_icon"
             android:layout_width="40dp"
             android:layout_height="39dp"
-            android:layout_marginStart="32dp"
+            android:layout_marginEnd="24dp"
             android:scaleType="fitXY"
             app:layout_constraintBottom_toBottomOf="@+id/day"
-            app:layout_constraintStart_toEndOf="@+id/day"
+            app:layout_constraintEnd_toStartOf="@+id/day_weather_status"
             app:layout_constraintTop_toTopOf="@+id/day"
             tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
         <TextView
             android:id="@+id/day_weather_status"
-            android:layout_width="wrap_content"
+            android:layout_width="124dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
+            android:layout_marginEnd="16dp"
             android:textColor="@color/primary"
-            android:textSize="20sp"
+            android:textSize="17sp"
             app:layout_constraintBottom_toBottomOf="@+id/day_icon"
-            app:layout_constraintStart_toEndOf="@+id/day_icon"
+            app:layout_constraintEnd_toStartOf="@+id/day_max_temp"
             app:layout_constraintTop_toTopOf="@+id/day_icon"
             tools:text="Clear" />
 
@@ -53,10 +56,10 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
             android:textColor="@color/primary"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="@+id/day_weather_status"
+            android:textSize="17sp"
+            app:layout_constraintBottom_toBottomOf="@+id/day_temp_unit"
             app:layout_constraintEnd_toStartOf="@+id/day_temp_unit"
-            app:layout_constraintTop_toTopOf="@+id/day_weather_status"
+            app:layout_constraintTop_toTopOf="@+id/day_temp_unit"
             tools:text="min" />
 
         <TextView
@@ -64,12 +67,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="2dp"
+            android:text="@string/dash"
             android:textColor="@color/primary"
-            android:textSize="18sp"
+            android:textSize="17sp"
             app:layout_constraintBottom_toBottomOf="@+id/day_min_temp"
             app:layout_constraintEnd_toStartOf="@+id/day_min_temp"
-            app:layout_constraintTop_toTopOf="@+id/day_min_temp"
-            tools:text="/" />
+            app:layout_constraintTop_toTopOf="@+id/day_min_temp" />
 
         <TextView
             android:id="@+id/day_max_temp"
@@ -77,22 +80,25 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="2dp"
             android:textColor="@color/primary"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="@+id/textView6"
+            android:textSize="17sp"
+            app:layout_constraintBottom_toBottomOf="@+id/day_min_temp"
             app:layout_constraintEnd_toStartOf="@+id/textView6"
-            app:layout_constraintTop_toTopOf="@+id/textView6"
+            app:layout_constraintTop_toTopOf="@+id/day_min_temp"
             tools:text="max" />
 
         <TextView
             android:id="@+id/day_temp_unit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
+            android:layout_marginTop="44dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="43dp"
+            android:text="@string/temp_unit_C"
             android:textColor="@color/primary"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="@+id/day_min_temp"
+            android:textSize="17sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/day_min_temp"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="°C" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

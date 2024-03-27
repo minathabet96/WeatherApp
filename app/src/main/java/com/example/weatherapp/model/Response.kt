@@ -58,3 +58,10 @@ data class Hourly(
     var temp       : Double,
     var weather    : List<Weather>
 )
+
+data class Current(val temp: Double)
+data class Alerts(val description: String)
+data class AlertResponse(
+    val current: Current,
+    val alerts: Alerts
+)

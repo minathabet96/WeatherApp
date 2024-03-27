@@ -47,12 +47,12 @@
             tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
         <TextView
-            android:id="@+id/unit"
+            android:id="@+id/temp_unit_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="°C"
+            android:layout_marginStart="4dp"
+            android:text="@string/temp_unit_C"
             android:textColor="@color/primary"
-            app:layout_constraintEnd_toEndOf="@+id/hour"
             app:layout_constraintStart_toEndOf="@+id/degree"
             app:layout_constraintTop_toTopOf="@+id/degree"
             tools:text="°C" />

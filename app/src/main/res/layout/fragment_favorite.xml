@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scroll"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/fave_constraintLayout"
@@ -60,7 +60,7 @@
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/fave_cardView2"
-                android:layout_width="360dp"
+                android:layout_width="400dp"
                 android:layout_height="240dp"
                 app:cardBackgroundColor="@color/secondary"
                 app:cardCornerRadius="20dp"
@@ -350,12 +350,10 @@
                 android:id="@+id/fave_location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="160dp"
-                android:layout_marginBottom="670dp"
+                android:layout_marginTop="60dp"
                 android:textColor="@color/primary"
                 android:textSize="25sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/fave_cardView2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

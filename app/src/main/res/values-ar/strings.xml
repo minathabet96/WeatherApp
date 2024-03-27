@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">تطبيق الطقس</string>
+    <string name="hello_blank_fragment">مرحبًا بالشاشة الفارغة</string>
+    <string name="pressure">الضغط</string>
+    <string name="humidity">الرطوبة</string>
+    <string name="wind">الرياح</string>
+    <string name="cloud">السحب</string>
+    <string name="visibility">الرؤية</string>
+    <string name="humidity_unit">%</string>
+    <string name="location">الموقع</string>
+    <string name="language">اللغة</string>
+    <string name="temperature">درجة الحرارة</string>
+    <string name="windSpeed">سرعة الرياح</string>
+    <string name="gps">نظام تحديد المواقع العالمي</string>
+    <string name="map">الخريطة</string>
+    <string name="english">الإنجليزية</string>
+    <string name="arabic">العربية</string>
+    <string name="celsius">درجة مئوية</string>
+    <string name="kelvin">كلفن</string>
+    <string name="fehrenheit">فهرنهايت</string>
+    <string name="meterPerSecond">م/ث</string>
+    <string name="meterPerSecond_settings">متر/ثانية</string>
+    <string name="milePerHour">م/س</string>
+    <string name="milePerHour_settings">ميل/ساعة</string>
+    <string name="add">إضافة موقع</string>
+    <string name="dash">/</string>
+    <string name="temp_unit_C">°م</string>
+    <string name="temp_unit_F">°ف</string>
+    <string name="temp_unit_K">°ك</string>
+    <string name="windUnit">م/ث</string>
+    <string name="unable_to_load_data">غير قادر على تحميل البيانات..</string>
+    <string name="no_connection">لا يوجد اتصال بالشبكة..</string>
+    <string name="day">اليوم</string>
+    <string name="pressure_unit">هـ.ب.ا</string>
+    <string name="visibility_unit">م</string>
+    <string name="home">الصفحة الرئيسية</string>
+    <string name="favorites">المفضلة</string>
+    <string name="alerts">التنبيهات</string>
+    <string name="settings">الإعدادات</string>
+
+</resources>

@@ -46,7 +46,7 @@ class WeatherDaoTest {
         runBlockingTest {
             //GIVEN
             val favoriteLocation = FavoriteLocation(name = "London", 0.0, 0.0)
-            dao.insert(favoriteLocation)
+            dao.insertIntoFavorites(favoriteLocation)
 
             //WHEN
             val result = dao.getAllFavorites()
@@ -65,11 +65,11 @@ class WeatherDaoTest {
             //GIVEN
             val location1 = FavoriteLocation("sample1", 0.0, 0.0)
             val location2 = FavoriteLocation("sample2", 1.0, 1.0)
-            dao.insert(location1)
-            dao.insert(location2)
+            dao.insertIntoFavorites(location1)
+            dao.insertIntoFavorites(location2)
 
             //WHEN
-            dao.delete(location2)
+            dao.deleteFromFavorites(location2)
             val result = dao.getAllFavorites()
             advanceUntilIdle()
             val locationList= result.first()

@@ -161,7 +161,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <RadioButton
-                    android:id="@+id/english_btn"
+                    android:id="@+id/engBtn"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:layout_marginBottom="10dp"
@@ -211,14 +211,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:layout_marginBottom="10dp"
-                    android:text="@string/meterPerSecond"
+                    android:text="@string/meterPerSecond_settings"
                     android:textColor="#FFFFFF" />
 
                 <RadioButton
                     android:id="@+id/mh_btn"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:text="@string/milePerHour"
+                    android:text="@string/milePerHour_settings"
                     android:textColor="#FFFFFF" />
             </RadioGroup>
         </androidx.constraintlayout.widget.ConstraintLayout>

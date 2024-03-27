@@ -1,5 +1,6 @@
 package com.example.weatherapp.network
 
+import com.example.weatherapp.model.AlertResponse
 import com.example.weatherapp.model.CurrentWeather
 import com.example.weatherapp.model.FiveDayForecast
 import com.example.weatherapp.model.HourlyWeather
@@ -16,6 +17,6 @@ interface WeatherService {
     suspend fun getWeekWeatherStats(@Query("lat") lat: String, @Query("lon") lon: String, @Query("appid") key: String,
                                     @Query("lang") lang: String, @Query("units") units: String): retrofit2.Response<FiveDayForecast>
     @GET("onecall")
-    suspend fun getHourlyWeatherStats(@Query("lat") lat: String, @Query("lon") lon: String,
-                                      @Query("exclude") part: String, @Query("appid") key: String): retrofit2.Response<HourlyWeather>
+    suspend fun getAlert(@Query("lat") lat: String, @Query("lon") lon: String,
+                         @Query("appid") key: String): retrofit2.Response<AlertResponse>
 }

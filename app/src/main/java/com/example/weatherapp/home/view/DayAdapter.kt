@@ -3,13 +3,16 @@ package com.example.weatherapp.home.view
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.weatherapp.Utils.DayDiffUtil
+import com.bumptech.glide.Glide
+import com.example.weatherapp.R
+import com.example.weatherapp.utils.DayDiffUtil
 import com.example.weatherapp.databinding.DayItemBinding
 import com.example.weatherapp.model.Day
 
-class DayAdapter(private val context: Context) : ListAdapter<Day, DayAdapter.ViewHolder>(DayDiffUtil()) {
+class DayAdapter(private val context: Context, private val tempUnit: String) : ListAdapter<Day, DayAdapter.ViewHolder>(DayDiffUtil()) {
 
     lateinit var binding: DayItemBinding
 
@@ -27,7 +30,15 @@ class DayAdapter(private val context: Context) : ListAdapter<Day, DayAdapter.Vie
         holder.binding.dayWeatherStatus.text = current.weatherState
         holder.binding.dayMaxTemp.text = current.max.toString()
         holder.binding.dayMinTemp.text = current.min.toString()
-        //Glide.with(context).load()
+        Glide.with(context)
+            .load("https://openweathermap.org/img/wn/${current.icon}@2x.png")
+            .into(holder.binding.dayIcon)
+        holder.binding.dayTempUnit.text =
+            when (tempUnit) {
+                "standard" -> ContextCompat.getString(context, R.string.temp_unit_K)
+                "imperial"  -> ContextCompat.getString(context, R.string.temp_unit_F)
+                else -> ContextCompat.getString(context, R.string.temp_unit_C)
+            }
     }
     class ViewHolder(val binding: DayItemBinding): RecyclerView.ViewHolder(binding.root)
 }

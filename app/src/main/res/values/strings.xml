@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">WeatherApp</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="pressure">Pressure</string>
     <string name="humidity">Humidity</string>
@@ -19,7 +18,25 @@
     <string name="celsius">Celsius</string>
     <string name="kelvin">Kelvin</string>
     <string name="fehrenheit">Fehrenheit</string>
-    <string name="meterPerSecond">Meter / Sec</string>
-    <string name="milePerHour">Mile / Hour</string>
+    <string name="meterPerSecond">m/s</string>
+    <string name="meterPerSecond_settings">meter/second</string>
+    <string name="milePerHour">mil/h</string>
+    <string name="milePerHour_settings">mile/hour</string>
     <string name="add">Add location</string>
+    <string name="dash">/</string>
+    <string name="temp_unit_C">°C</string>
+    <string name="temp_unit_F">°F</string>
+    <string name="temp_unit_K">°K</string>
+    <string name="windUnit">m/s</string>
+    <string name="unable_to_load_data">Unable to load data..</string>
+    <string name="no_connection">"There's no internet connection.."</string>
+    <string name="day">day</string>
+    <string name="pressure_unit">h.p.a</string>
+    <string name="visibility_unit">m</string>
+    <string name="home">Home</string>
+    <string name="favorites">Favorites</string>
+    <string name="alerts">Alerts</string>
+    <string name="settings">Settings</string>
+
+
 </resources>

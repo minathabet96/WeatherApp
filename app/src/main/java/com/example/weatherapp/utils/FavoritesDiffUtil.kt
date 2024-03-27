@@ -1,4 +1,4 @@
-package com.example.weatherapp.Utils
+package com.example.weatherapp.utils
 
 import androidx.recyclerview.widget.DiffUtil
 import com.example.weatherapp.model.FavoriteLocation

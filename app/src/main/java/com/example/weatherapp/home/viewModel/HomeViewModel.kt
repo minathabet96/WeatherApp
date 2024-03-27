@@ -3,7 +3,8 @@ package com.example.weatherapp.home.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weatherapp.Utils.ApiResponse
+import com.example.weatherapp.model.AlertResponse
+import com.example.weatherapp.utils.ApiResponse
 import com.example.weatherapp.model.CurrentWeather
 import com.example.weatherapp.model.FiveDayForecast
 import com.example.weatherapp.model.WeatherRepository
@@ -15,6 +16,9 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 class HomeViewModel(private val repo: WeatherRepository): ViewModel() {
+    private val _alertStateFlow: MutableStateFlow<ApiResponse<AlertResponse>> = MutableStateFlow(ApiResponse.Loading())
+    val alertStateFlow: StateFlow<ApiResponse<AlertResponse>> = _alertStateFlow.asStateFlow()
+
     private val _currentWeatherStateFlow: MutableStateFlow<ApiResponse<CurrentWeather>> = MutableStateFlow(ApiResponse.Loading())
     val currentWeatherStateFlow: StateFlow<ApiResponse<CurrentWeather>> = _currentWeatherStateFlow.asStateFlow()
 
@@ -35,6 +39,14 @@ class HomeViewModel(private val repo: WeatherRepository): ViewModel() {
             flow
                 .catch { _fiveDayForecastStateFlow.value = ApiResponse.Failure(it) }
                 .collect { _fiveDayForecastStateFlow.value = ApiResponse.Success(it) }
+        }
+    }
+    fun getAlert(lat: String, lon: String){
+        val flow = repo.getAlert(lat, lon)
+        viewModelScope.launch(Dispatchers.IO) {
+            flow
+                .catch { _alertStateFlow.value = ApiResponse.Failure(it) }
+                .collect { _alertStateFlow.value = ApiResponse.Success(it) }
         }
     }
 }

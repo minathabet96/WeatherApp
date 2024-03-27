@@ -1,10 +1,11 @@
 package com.example.weatherapp.favorites.view
 
+import android.content.Context
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -18,6 +19,7 @@ import com.example.weatherapp.favorites.viewmodel.FavoritesViewModelFactory
 import com.example.weatherapp.model.FavoriteLocation
 import com.example.weatherapp.model.WeatherRemoteDataSource
 import com.example.weatherapp.model.WeatherRepository
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 class FavoritesFragment : Fragment(), OnFavoriteClickListener {
@@ -27,9 +29,13 @@ class FavoritesFragment : Fragment(), OnFavoriteClickListener {
     private lateinit var theView: View
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this, FavoritesViewModelFactory(
-            (WeatherRepository.getInstance(WeatherRemoteDataSource(), WeatherLocalDataSource(requireContext())))
-        )
+        viewModel = ViewModelProvider(
+            this, FavoritesViewModelFactory(
+                (WeatherRepository.getInstance(
+                    WeatherRemoteDataSource(),
+                    WeatherLocalDataSource(requireContext())
+                ))
+            )
         )[FavoritesViewModel::class.java]
     }
 
@@ -47,31 +53,41 @@ class FavoritesFragment : Fragment(), OnFavoriteClickListener {
         theView = view
         viewModel.getAllFavorites()
         lifecycleScope.launch {
-            viewModel.stateFlow.collect {
+            viewModel.favoritesStateFlow.collect {
                 binding.rv.apply {
-                    println("list size tho: ${it.size}")
+                    if (it.isEmpty()) {
+                        println("empty")
+                        binding.noFavorites.visibility = View.VISIBLE
+                        binding.rv.visibility = View.GONE
+                    } else {
+                        binding.noFavorites.visibility = View.GONE
+                        binding.rv.visibility = View.VISIBLE
+                    }
                     favoritesAdapter.submitList(it)
                     adapter = favoritesAdapter
                     layoutManager = LinearLayoutManager(requireContext())
                 }
-                binding.addFab.setOnClickListener{
-                    Toast.makeText(requireContext(), "fab clicked", Toast.LENGTH_SHORT).show()
-                    findNavController(view).navigate(R.id.mapsFragment)
-                //                    navController.navigate(R.id.mapsFragment)
-//                    val fragmentManager: FragmentManager = childFragmentManager
-//                    fragmentManager.commit {
-//                        this.replace(R.id.nav_host_fragment, MapsFragment(), null)
-//                            .setReorderingAllowed(true)
-//                            .addToBackStack("favorites")
-//                            .commit()
-//                    }
+                binding.addFab.setOnClickListener {
+                    val connectivityManager =
+                        context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                    if (connectivityManager.activeNetwork == null)
+                        Snackbar.make(
+                            requireView(),
+                            R.string.no_connection,
+                            Snackbar.ANIMATION_MODE_FADE
+                        ).show()
+                    else {
+                        val action =
+                            FavoritesFragmentDirections.actionFavoritesFragmentToMapsFragment2(true)
+                        findNavController(view).navigate(action)
+                    }
                 }
             }
         }
     }
 
     override fun onDeleteLocationClick(location: FavoriteLocation) {
-        viewModel.remove(location)
+        viewModel.removeFromFavorites(location)
     }
 
     override fun onFavoriteLocationClick(location: FavoriteLocation) {

@@ -45,7 +45,7 @@ class WeatherLocalDataSourceTest {
         runTest {
             //GIVEN
             val favoriteLocation = FavoriteLocation(name = "London", 0.0, 0.0)
-            localDataSource.add(favoriteLocation)
+            localDataSource.addToFavorites(favoriteLocation)
 
             //WHEN
             val result = localDataSource.getAllFavorites()
@@ -66,13 +66,13 @@ class WeatherLocalDataSourceTest {
             //GIVEN
             val location1 = FavoriteLocation("sample1", 0.0, 0.0)
             val location2 = FavoriteLocation("sample2", 1.0, 1.0)
-            localDataSource.add(location1)
-            localDataSource.add(location2)
+            localDataSource.addToFavorites(location1)
+            localDataSource.addToFavorites(location2)
 
             //WHEN
             val result = localDataSource.getAllFavorites()
             advanceUntilIdle()
-            localDataSource.remove(location1)
+            localDataSource.removeFromFavorites(location1)
             val locationList= result.first()
 
             //THEN
