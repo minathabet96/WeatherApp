@@ -2,22 +2,7 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="WeatherDaoTest">
-        <State />
-      </entry>
       <entry key="app">
-        <State />
-      </entry>
-      <entry key="deleteLocation_oneInputLocation_zeroSize()">
-        <State />
-      </entry>
-      <entry key="insertAndRetrieveLocation_locationWithNameLondon_theSameLocation()">
-        <State />
-      </entry>
-      <entry key="insertAndRetrieve_locationWithNameLondon_theSameLocation()">
-        <State />
-      </entry>
-      <entry key="removeLocation_twoInputLocations_sizeOfOne()">
         <State />
       </entry>
     </value>

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.model.Alert
 import com.example.weatherapp.model.FavoriteLocation
+import com.example.weatherapp.model.IWeatherRepository
 import com.example.weatherapp.model.WeatherRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -15,9 +16,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
-class FavoritesViewModel(private val repo: WeatherRepository): ViewModel() {
+class FavoritesViewModel(private val repo: IWeatherRepository): ViewModel() {
 
     var alert = Alert("", 0.0, 0.0, "", 0)
+
     private var _favoritesStateFlow: MutableStateFlow<List<FavoriteLocation>> = MutableStateFlow(listOf())
     val favoritesStateFlow: StateFlow<List<FavoriteLocation>> = _favoritesStateFlow.asStateFlow()
 

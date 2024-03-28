@@ -6,9 +6,9 @@ import com.example.weatherapp.utils.PART
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class WeatherRemoteDataSource {
+class WeatherRemoteDataSource : IIWeatherRemoteDataSource {
     private val service = RetrofitHelper.apiInstance
-    fun getCurrentWeatherStats(
+    override fun getCurrentWeatherStats(
         lat: String,
         lon: String,
         lang: String,
@@ -22,7 +22,7 @@ class WeatherRemoteDataSource {
         }
     }
 
-    fun getWeekWeatherStats(
+    override fun getWeekWeatherStats(
         lat: String,
         lon: String,
         lang: String,
@@ -30,14 +30,6 @@ class WeatherRemoteDataSource {
     ): Flow<FiveDayForecast>{
         return flow {
             emit(service.getWeekWeatherStats(lat, lon, KEY, lang, units).body()?: FiveDayForecast())
-        }
-    }
-    fun getAlert(
-        lat: String,
-        lon: String,
-    ): Flow<AlertResponse>{
-        return flow {
-            //emit(service.getAlert(lat, lon, PART, KEY).body()?: AlertResponse(Current(0.0), Alerts("")))
         }
     }
 }

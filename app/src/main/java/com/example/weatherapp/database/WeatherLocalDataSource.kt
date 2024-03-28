@@ -5,29 +5,29 @@ import com.example.weatherapp.model.Alert
 import com.example.weatherapp.model.FavoriteLocation
 import kotlinx.coroutines.flow.Flow
 
-class WeatherLocalDataSource(c: Context) {
+class WeatherLocalDataSource(c: Context) : IWeatherLocalDataSource {
     private val dao = AppDatabase.getInstance(c).weatherDAO
 
-    suspend fun addToFavorites(location: FavoriteLocation){
+    override suspend fun addToFavorites(location: FavoriteLocation){
         dao.insertIntoFavorites(location)
     }
 
-    suspend fun removeFromFavorites(location: FavoriteLocation) {
+    override suspend fun removeFromFavorites(location: FavoriteLocation) {
         dao.deleteFromFavorites(location)
 
     }
-    fun getAllFavorites(): Flow<List<FavoriteLocation>> {
+    override fun getAllFavorites(): Flow<List<FavoriteLocation>> {
         return dao.getAllFavorites()
     }
-    suspend fun addToAlerts(alert: Alert){
+    override suspend fun addToAlerts(alert: Alert){
         dao.insertIntoAlerts(alert)
     }
 
-    suspend fun removeFromAlerts(alert: Alert) {
+    override suspend fun removeFromAlerts(alert: Alert) {
         dao.deleteFromAlerts(alert)
 
     }
-    fun getAllAlerts(): Flow<List<Alert>> {
+    override fun getAllAlerts(): Flow<List<Alert>> {
         return dao.getAllAlerts()
     }
 }
