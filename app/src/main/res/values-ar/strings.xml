@@ -12,7 +12,7 @@
     <string name="language">اللغة</string>
     <string name="temperature">درجة الحرارة</string>
     <string name="windSpeed">سرعة الرياح</string>
-    <string name="gps">نظام تحديد المواقع العالمي</string>
+    <string name="gps">الموقع</string>
     <string name="map">الخريطة</string>
     <string name="english">الإنجليزية</string>
     <string name="arabic">العربية</string>
@@ -38,5 +38,15 @@
     <string name="favorites">المفضلة</string>
     <string name="alerts">التنبيهات</string>
     <string name="settings">الإعدادات</string>
+    <string name="chooseLocation">اختر الموقع</string>
+    <string name="invalidSelection">إختيار خاطئ</string>
+    <string name="chooseAValidTime">إختر وقت صحيح</string>
+    <string name="dismiss">إغلاق</string>
+    <string name="deleteAlarm">إزالة التنبيه</string>
+    <string name="deleteLocation">إزالة الموقع</string>
+    <string name="deleteAlarmDialogMessage">هل أنت متأكد أنك تريد حذف هذا التنبيه؟</string>
+    <string name="deleteFavoriteDialogMessage">هل أنت متأكد أنك تريد حذف هذا الموقع؟</string>
+    <string name="delete">إزالة</string>
+    <string name="cancel">إلغاء</string>
 
 </resources>

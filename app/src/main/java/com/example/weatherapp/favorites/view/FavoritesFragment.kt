@@ -1,6 +1,7 @@
 package com.example.weatherapp.favorites.view
 
 import android.content.Context
+import android.content.DialogInterface
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,7 +12,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.WorkManager
 import com.example.weatherapp.R
+import com.example.weatherapp.alerts.view.showDialog
 import com.example.weatherapp.database.WeatherLocalDataSource
 import com.example.weatherapp.databinding.FragmentFavoritesBinding
 import com.example.weatherapp.favorites.viewmodel.FavoritesViewModel
@@ -19,8 +22,10 @@ import com.example.weatherapp.favorites.viewmodel.FavoritesViewModelFactory
 import com.example.weatherapp.model.FavoriteLocation
 import com.example.weatherapp.model.WeatherRemoteDataSource
 import com.example.weatherapp.model.WeatherRepository
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 class FavoritesFragment : Fragment(), OnFavoriteClickListener {
     private lateinit var binding: FragmentFavoritesBinding
@@ -74,11 +79,11 @@ class FavoritesFragment : Fragment(), OnFavoriteClickListener {
                         Snackbar.make(
                             requireView(),
                             R.string.no_connection,
-                            Snackbar.ANIMATION_MODE_FADE
+                            Snackbar.LENGTH_LONG
                         ).show()
                     else {
                         val action =
-                            FavoritesFragmentDirections.actionFavoritesFragmentToMapsFragment2(true)
+                            FavoritesFragmentDirections.actionFavoritesFragmentToMapsFragment2(true, false)
                         findNavController(view).navigate(action)
                     }
                 }
@@ -87,7 +92,16 @@ class FavoritesFragment : Fragment(), OnFavoriteClickListener {
     }
 
     override fun onDeleteLocationClick(location: FavoriteLocation) {
-        viewModel.removeFromFavorites(location)
+        showDialog(
+            requireContext(),
+            getString(R.string.deleteLocation),
+            getString(R.string.deleteFavoriteDialogMessage),
+            getString(R.string.delete),
+            getString(R.string.cancel),
+            { _, _ ->
+                WorkManager.getInstance(requireContext())
+                viewModel.removeFromFavorites(location)
+            }) { dialog, _ -> dialog.dismiss() }
     }
 
     override fun onFavoriteLocationClick(location: FavoriteLocation) {

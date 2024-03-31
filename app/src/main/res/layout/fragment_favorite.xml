@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scroll"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:textAlignment="center">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/fave_constraintLayout"
@@ -14,16 +15,25 @@
         android:minHeight="800dp"
         tools:context=".home.view.HomeFragment">
 
-        <ProgressBar
-            android:id="@+id/fave_progressBar"
-            style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Large"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="370dp"
-            android:visibility="visible"
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/fave_loading_lottie"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="280dp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/loading_updated" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/fave_failure_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="fave_failure_lottie,fave_unable" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/fave_mainGroup"
@@ -234,7 +244,7 @@
                         tools:text="1000" />
 
                     <TextView
-                        android:id="@+id/fave_textView16"
+                        android:id="@+id/fave_pressure_unit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="2dp"
@@ -348,9 +358,11 @@
 
             <TextView
                 android:id="@+id/fave_location"
-                android:layout_width="wrap_content"
+                android:layout_width="260dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="60dp"
+                android:lineSpacingMultiplier="1.0"
+                android:textAlignment="center"
                 android:textColor="@color/primary"
                 android:textSize="25sp"
                 android:textStyle="bold"
@@ -371,6 +383,30 @@
                 app:layout_constraintTop_toBottomOf="@+id/fave_location"
                 tools:text="day, dd mmm" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/fave_failure_lottie"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="260dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_rawRes="@raw/failure" />
+
+        <TextView
+            android:id="@+id/fave_unable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/unable_to_load_data"
+            android:textColor="@color/primary"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="@id/fave_failure_lottie"
+            app:layout_constraintStart_toStartOf="@id/fave_failure_lottie"
+            app:layout_constraintTop_toBottomOf="@id/fave_failure_lottie" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

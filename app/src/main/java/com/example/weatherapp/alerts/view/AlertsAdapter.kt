@@ -27,6 +27,7 @@ class AlertsAdapter(var listener: (Alert) -> Unit) : ListAdapter<Alert, AlertsAd
 
         binding.deleteIcon.setOnClickListener{
             listener(current)
+
         }
     }
     class ViewHolder(var binding: AlertItemBinding): RecyclerView.ViewHolder(binding.root)

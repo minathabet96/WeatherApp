@@ -14,7 +14,12 @@
         android:id="@+id/settingsFragment"
         android:name="com.example.weatherapp.settings.view.SettingsFragment"
         android:label="fragment_settings"
-        tools:layout="@layout/fragment_settings" />
+        tools:layout="@layout/fragment_settings" >
+        <action
+            android:id="@+id/action_settingsFragment_to_mapsFragment"
+            app:destination="@id/mapsFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="com.example.weatherapp.favorites.view.FavoritesFragment"
@@ -38,6 +43,9 @@
         <action
             android:id="@+id/action_mapsFragment_to_alertsFragment"
             app:destination="@id/alertsFragment" />
+        <argument
+            android:name="isInSettings"
+            app:argType="boolean" />
     </fragment>
     <fragment
         android:id="@+id/favoriteFragment"

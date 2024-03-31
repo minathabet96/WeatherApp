@@ -12,13 +12,19 @@ import com.example.weatherapp.utils.DayDiffUtil
 import com.example.weatherapp.databinding.DayItemBinding
 import com.example.weatherapp.model.Day
 
-class DayAdapter(private val context: Context, private val tempUnit: String) : ListAdapter<Day, DayAdapter.ViewHolder>(DayDiffUtil()) {
+class DayAdapter(
+    private val context: Context,
+    private val tempUnit: String,
+    private val recyclerView: RecyclerView,
+    val listener: (Day) -> Unit
+) : ListAdapter<Day, DayAdapter.ViewHolder>(DayDiffUtil()) {
 
     lateinit var binding: DayItemBinding
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val inflater: LayoutInflater = parent.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val inflater: LayoutInflater =
+            parent.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         binding = DayItemBinding.inflate(inflater, parent, false)
         return ViewHolder(binding)
 
@@ -36,9 +42,22 @@ class DayAdapter(private val context: Context, private val tempUnit: String) : L
         holder.binding.dayTempUnit.text =
             when (tempUnit) {
                 "standard" -> ContextCompat.getString(context, R.string.temp_unit_K)
-                "imperial"  -> ContextCompat.getString(context, R.string.temp_unit_F)
+                "imperial" -> ContextCompat.getString(context, R.string.temp_unit_F)
                 else -> ContextCompat.getString(context, R.string.temp_unit_C)
             }
+
+        holder.binding.clayout.setOnClickListener {
+            for (item in currentList) {
+                if (current == item) {
+                    holder.binding.clayout.setBackgroundResource(R.drawable.gradient)
+                } else {
+                    (recyclerView.findViewHolderForAdapterPosition(currentList.indexOf(item)) as ViewHolder).binding.clayout.setBackgroundResource(R.color.secondary)
+                }
+            }
+            listener(current)
+        }
+
     }
-    class ViewHolder(val binding: DayItemBinding): RecyclerView.ViewHolder(binding.root)
+
+    class ViewHolder(val binding: DayItemBinding) : RecyclerView.ViewHolder(binding.root)
 }

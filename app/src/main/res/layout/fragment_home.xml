@@ -22,7 +22,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:lottie_rawRes="@raw/loading"
+            app:lottie_rawRes="@raw/loading_updated"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"/>
 
@@ -244,7 +244,7 @@
                         tools:text="1000" />
 
                     <TextView
-                        android:id="@+id/textView16"
+                        android:id="@+id/pressure_txt_unit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="2dp"
@@ -321,20 +321,19 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
-                        android:text="TextView"
                         android:textColor="@color/primary"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="weather state" />
 
                     <TextView
                         android:id="@+id/degree"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
-                        android:text="TextView"
                         android:textColor="#FFFFFF"
                         android:textColorHighlight="#753232"
                         android:textSize="80sp"
@@ -354,14 +353,28 @@
                         app:layout_constraintStart_toEndOf="@+id/degree"
                         app:layout_constraintTop_toTopOf="@+id/degree"
                         tools:text="°C" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
 
+            <ImageView
+                android:id="@+id/current_weather_icon"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="-60dp"
+                android:elevation="2dp"
+                android:scaleType="fitXY"
+                app:layout_constraintEnd_toEndOf="@id/cardView"
+                app:layout_constraintStart_toStartOf="@id/cardView"
+                app:layout_constraintTop_toBottomOf="@id/cardView"
+                tools:srcCompat="@drawable/weatherapp" />
             <TextView
                 android:id="@+id/location"
-                android:layout_width="wrap_content"
+                android:layout_width="260dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="60dp"
+                android:lineSpacingMultiplier="1.0"
+                android:textAlignment="center"
                 android:textColor="@color/primary"
                 android:textSize="25sp"
                 android:textStyle="bold"
@@ -381,6 +394,7 @@
                 app:layout_constraintStart_toStartOf="@+id/location"
                 app:layout_constraintTop_toBottomOf="@+id/location"
                 tools:text="day, dd mmm" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.airbnb.lottie.LottieAnimationView

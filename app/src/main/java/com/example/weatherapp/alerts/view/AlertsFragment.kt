@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.Constraints
 import androidx.work.Data
@@ -37,6 +38,7 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.timepicker.MaterialTimePicker
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.Duration
 import java.util.Calendar
@@ -63,10 +65,10 @@ class AlertsFragment : Fragment() {
         alertsAdapter = AlertsAdapter { alert ->
             showDialog(
                 requireContext(),
-                "Delete Alarm",
-                "Are you sure you want to delete this alarm?",
-                "Delete",
-                "Cancel",
+                getString(R.string.deleteAlarm),
+                getString(R.string.deleteAlarmDialogMessage),
+                getString(R.string.delete),
+                getString(R.string.cancel),
                 { _, _ ->
                     WorkManager.getInstance(requireContext())
                         .cancelWorkById(UUID.fromString(alert.id))
@@ -80,38 +82,49 @@ class AlertsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getAllAlerts()
         lifecycleScope.launch {
+            viewModel.getAllAlerts()
             viewModel.alertsStateFlow.collect { list ->
+                println("LIST SIZE: ${list.size}")
                 val filteredList = list.filter {
                     it.time > System.currentTimeMillis()
                 }
                 for (alert in list) {
                     if (alert.time < System.currentTimeMillis())
-                        println("alert's time: ${alert.time} and current time: ${System.currentTimeMillis()}")
+                        viewModel.removeFromAlerts(alert)
                 }
+
                 if (filteredList.isEmpty()) {
                     binding.noAlerts.visibility = View.VISIBLE
                     binding.alertsRecycler.visibility = View.GONE
-                }
-                else {
+                } else {
                     binding.noAlerts.visibility = View.GONE
                     binding.alertsRecycler.visibility = View.VISIBLE
                 }
                 binding.alertsRecycler.apply {
                     alertsAdapter.submitList(filteredList)
+                    for (i in filteredList) {
+                        println("location name: ${i.name}")
+                    }
                     adapter = alertsAdapter
                     layoutManager = LinearLayoutManager(requireContext())
                 }
 
             }
         }
-        if (viewModel.alert.name.isNotEmpty())
+        if (viewModel.alert.name.isEmpty()) {
+            println("it is empty")
+        }
+        if (viewModel.alert.name.isNotEmpty()) {
+            println("alert's location name after it's sent is: ${viewModel.alert.name}")
             setAlert(viewModel.alert)
+        }
         binding.alertsFab.setOnClickListener {
-            val connectivityManager = context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            if(connectivityManager.activeNetwork==null)
-                Snackbar.make(requireView(), R.string.no_connection, Snackbar.ANIMATION_MODE_FADE).show()
+            val connectivityManager =
+                context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            if (connectivityManager.activeNetwork == null)
+                Snackbar.make(requireView(), R.string.no_connection, Snackbar.ANIMATION_MODE_FADE)
+                    .show()
             else {
                 ActivityCompat.requestPermissions(
                     requireActivity(),
@@ -121,7 +134,8 @@ class AlertsFragment : Fragment() {
                     ), 0
                 )
                 if (hasPermission()) {
-                    val action = AlertsFragmentDirections.actionAlertsFragmentToMapsFragment(false)
+                    val action =
+                        AlertsFragmentDirections.actionAlertsFragmentToMapsFragment(false, false)
                     findNavController(view).navigate(action)
                 } else {
                     requestPermission()
@@ -131,6 +145,7 @@ class AlertsFragment : Fragment() {
     }
 
     private fun setAlert(alert: Alert) {
+
         val dateConstraints =
             CalendarConstraints.Builder().setValidator(DateValidatorPointForward.now())
 
@@ -156,7 +171,11 @@ class AlertsFragment : Fragment() {
                 timePicker.minute
             ) - 7200000
             if (selectedTime < System.currentTimeMillis()) {
-                println("INVALID SELECTION!!!")
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(resources.getString(R.string.invalidSelection))
+                    .setMessage(resources.getString(R.string.chooseAValidTime))
+                    .setPositiveButton(resources.getString(R.string.dismiss)) { dialog, _ -> dialog.dismiss() }
+                    .show()
             } else {
                 val request = OneTimeWorkRequestBuilder<MyWorker>().setInitialDelay(
                     selectedTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS
@@ -176,8 +195,14 @@ class AlertsFragment : Fragment() {
                 WorkManager.getInstance(requireContext()).cancelWorkById(builtRequest.id)
                 alert.id = builtRequest.id.toString()
                 alert.time = selectedTime
+                println("from set alert name is: ${alert.name}")
                 viewModel.addToAlerts(alert)
                 WorkManager.getInstance(requireContext()).enqueue(builtRequest)
+                lifecycleScope.launch {
+                    delay(300)
+                    viewModel.alert.name = ""
+                    findNavController().navigate(R.id.alertsFragment)
+                }
             }
 
         }
@@ -196,18 +221,6 @@ class AlertsFragment : Fragment() {
         return Settings.canDrawOverlays(requireContext())
     }
 
-    private fun showDialog(
-        ctx: Context, title: String, message: String,
-        posString: String, negString: String,
-        posListener: DialogInterface.OnClickListener, negListener: DialogInterface.OnClickListener
-    ) {
-        MaterialAlertDialogBuilder(ctx)
-            .setMessage(message)
-            .setTitle(title)
-            .setPositiveButton(posString, posListener)
-            .setNegativeButton(negString, negListener)
-            .show()
-    }
 
     private fun requestPermission() {
 
@@ -224,6 +237,19 @@ class AlertsFragment : Fragment() {
             { dialog, _ -> dialog.dismiss() },
         )
     }
+}
+
+fun showDialog(
+    ctx: Context, title: String, message: String,
+    posString: String, negString: String,
+    posListener: DialogInterface.OnClickListener, negListener: DialogInterface.OnClickListener
+) {
+    MaterialAlertDialogBuilder(ctx)
+        .setMessage(message)
+        .setTitle(title)
+        .setPositiveButton(posString, posListener)
+        .setNegativeButton(negString, negListener)
+        .show()
 }
 
 

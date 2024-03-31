@@ -5,4 +5,4 @@ import androidx.room.PrimaryKey
 import java.io.Serializable
 
 @Entity
-data class Alert(@PrimaryKey val name: String, val lat: Double, val lon: Double, var id: String, var time: Long): Serializable
+data class Alert(@PrimaryKey var name: String, val lat: Double, val lon: Double, var id: String, var time: Long): Serializable

@@ -4,12 +4,15 @@ import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.weatherapp.model.HomeLocation
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.withContext
 
 class DataStoreUtil private constructor(context: Context) {
 
@@ -29,7 +32,8 @@ class DataStoreUtil private constructor(context: Context) {
         private val temp = stringPreferencesKey("temp")
         private val wind = stringPreferencesKey("wind")
         private val lang = stringPreferencesKey("lang")
-        private val loc = stringPreferencesKey("loc")
+        private val location = stringPreferencesKey("loc")
+        private val homeLocation = stringPreferencesKey("homeLocation")
 
     suspend fun setTempUnit(unit: String) {
         dataStore.edit {
@@ -75,16 +79,32 @@ class DataStoreUtil private constructor(context: Context) {
             }
             .shareIn(CoroutineScope(Dispatchers.IO), SharingStarted.WhileSubscribed(), 1)
     }
-    suspend fun setLocation(unit: String) {
+    suspend fun setLocationSetting(unit: String) {
         dataStore.edit {
-            it[loc] = unit
+            it[location] = unit
         }
     }
 
-    fun getLocation(): SharedFlow<String> {
+    fun getLocationSetting(): SharedFlow<String> {
         return dataStore.data
             .map {
-                val unit = it[loc] ?: "gps"
+                val unit = it[location] ?: "gps"
+                unit
+            }
+            .shareIn(CoroutineScope(Dispatchers.IO), SharingStarted.WhileSubscribed(), 1)
+    }
+
+
+    suspend fun setHomeLocation(location: HomeLocation) {
+        dataStore.edit {
+            it[homeLocation] = Gson().toJson(location)
+        }
+    }
+
+    fun getHomeLocation(): SharedFlow<String> {
+        return dataStore.data
+            .map {
+                val unit = it[homeLocation] ?: ""
                 unit
             }
             .shareIn(CoroutineScope(Dispatchers.IO), SharingStarted.WhileSubscribed(), 1)

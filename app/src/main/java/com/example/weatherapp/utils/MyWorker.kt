@@ -59,7 +59,7 @@ class MyWorker(context: Context, workerParameters: WorkerParameters) :
         println("init")
         val lat = inputData.getString("lat")
         val lon = inputData.getString("lon")
-        val name = inputData.getString("name")
+        val name = inputData.getString("name") + " weather"
         println("lat: $lat")
         println("lon: $lat")
         val retro = Retrofit.Builder()
@@ -68,7 +68,8 @@ class MyWorker(context: Context, workerParameters: WorkerParameters) :
             .build().create(WeatherService::class.java)
         val response = retro.getCurrentWeatherStats(lat!!, lon!!, KEY, "en", "metric")
         println("response code: ${response.code()}")
-        sendNotification(1230, name?: "failed to get name", response.body()?.weather?.get(0)?.description?: "failed to get location")
+        val body = "Temperature: ${response.body()?.main?.temp}°C\n${response.body()?.weather?.get(0)?.description}"
+        sendNotification(1000, name, body)
         return Result.success()
     }
 
@@ -90,7 +91,7 @@ class MyWorker(context: Context, workerParameters: WorkerParameters) :
 
         val pendingIntent = getActivity(applicationContext, 0, intent, FLAG_IMMUTABLE)
         val notification = NotificationCompat.Builder(applicationContext, "channel")
-            .setSmallIcon(R.drawable.alerts)
+            .setSmallIcon(R.drawable.weatherapp)
             .setDefaults(0).setAutoCancel(true)
             .setStyle(NotificationCompat.DecoratedCustomViewStyle())
             .setCustomContentView(notificationLayout)
@@ -120,23 +121,19 @@ class MyWorker(context: Context, workerParameters: WorkerParameters) :
             ) != PermissionChecker.PERMISSION_GRANTED
         ) {
             println("NOTIFICATIONS PERMISSION NOT GRANTED")
-//            ActivityCompat.requestPermissions(req,
-//                arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
-//                MY_PERMISSION_ID
-//            )
         } else {
             println("PERMISSIONS GRANTED")
             notificationManager.notify(id, notification.build())
         }
     }
 
-    private suspend fun requestPermissions(permissions: Array<String>) {
-        withContext(Dispatchers.Main) {
-            ActivityCompat.requestPermissions(
-                applicationContext as Activity, // Assuming applicationContext is Activity
-                permissions,
-                1000
-            )
-        }
-    }
+//    private suspend fun requestPermissions(permissions: Array<String>) {
+//        withContext(Dispatchers.Main) {
+//            ActivityCompat.requestPermissions(
+//                applicationContext as Activity,
+//                permissions,
+//                1000
+//            )
+//        }
+//    }
 }

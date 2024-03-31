@@ -10,7 +10,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Large notification, showing a title and a body." />
+        android:text="Large notification, showing a title and a body."
+        android:textColor="@color/secondary"
+        android:textSize="20dp" />
 
     <TextView
         android:id="@+id/notification_body"
@@ -18,5 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="This is the body. The height is manually forced to 300dp." />
+        android:text="This is the body. The height is manually forced to 300dp."
+        android:textColor="@color/secondary"
+        android:textSize="30dp" />
 </LinearLayout>
